@@ -1,126 +1,164 @@
-### 这是一个自动构建GKI内核的仓库
+<div align="center">
 
-> 不支持一加ColorOS14、15，刷入后可能需要清除数据开机
->
-> 第一次使用务必**详细阅读**以下内容，不要因为懒惰而占用他人时间！
->
-> 尝试构建集成 [hymo挂载元模块](https://github.com/Anatdx/hymo)的GKI内核，但该项目目前仅支持6.6，因此未完整合并到本仓库主分支。链接为[hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r18)
->
-> Attempted to build a GKI kernel with [hymo](https://github.com/Anatdx/hymo) integration. However, since the project currently only supports kernel 6.6, it has not been fully merged into the main branch.
-> Link: [hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r19)
+# GKI KernelSU SUSFS
+### 🏮 2026 🐎 Happy New Year! 🏮
 
-### 无限重启？
-1. 一加/真我/op：进入系统rec清除Data数据后重启
-2. 小米：少数机型因为启动引导因avb验证导致无法启动分区，需要关闭[avb验证](https://magiskcn.com/disable-avb)
-3. zram:一些机型或系统使用了带zram补丁的内核也可能，遇到该情况可以刷[Release](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)中不带zram的内核，或者在编译选项中不勾选[增加更多ZRAM算法]以编译无zram的内核
-4. 其他：KSU驱动导致的bootloop，错误代码未得到修复而构建内核
+**自动化构建 GKI 内核 | 集成 KernelSU + SUSFS**
 
-### BUG反馈？
-该仓库仅提供GKI内核编译流程，也就是把KSU变体驱动合并内核二进制。关系为：对应KSU仓库或SUSFS更新了代码，该仓库编译包含最新KSU的内核，用户刷入编译成品使用。
-如果恰巧在KSU最新提交中出现了某一BUG，而你刷入了包含这段代码的内核，你应该向制造问题代码的地方反馈或者耐心等待下一版本是否修复。
-**而不是说本仓库更新了有BUG的内核，请快解决**
+[![Release](https://img.shields.io/github/v/release/zzh20188/GKI_KernelSU_SUSFS?label=Release&style=flat-square&logo=github&logoColor=white&color=2ea44f)](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)
+[![Coolapk](https://img.shields.io/badge/Follow-Coolapk-3DDC84?style=flat-square&logo=android&logoColor=white)](http://www.coolapk.com/u/11253396)
+[![KernelSU](https://img.shields.io/badge/KernelSU-Supported-5AA300?style=flat-square)](https://kernelsu.org/)
+[![SUSFS](https://img.shields.io/badge/SUSFS-Integrated-E67E22?style=flat-square)](https://gitlab.com/simonpunk/susfs4ksu)
 
-### Tips
-1. 关于安全补丁
-    - 手机设置里的安全补丁时间与GKI内核的安全补丁时间**无关**，请无视它
-2. 关于android版本
-    - 手机系统的安卓版本与GKI内核的安卓版本无关，应当对照手机内核版本的 **android**
-    - 假设手机设置的内核版本为 5.10.66-**android12**-9-00001-g41ff3fa8fop9-ab8161528
-    - 那么你需要刷入[在此](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)下载的 **android12**-5.10.66-2022-01-AnyKernel3.zip 文件
+[**English**](README-EN.md) | 简体中文
 
-### 下载
-可以[在此](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)下载您的资源
-1. 关于Anykernel3.zip，下载即用！
-   - 然后使用刷入软件，例如[HorizonKernelFlasher](https://github.com/libxzr/HorizonKernelFlasher/releases)进行刷写内核
-2. 关于boot.img，下载与你内核格式相匹配的（无压缩、gz、lz4），[参考](https://kernelsu.org/zh_CN/guide/installation.html#install-by-kernelsu-boot-image) **找到合适的 boot.img** 一节
-    - 使用[FASTBOOT](https://magiskcn.com/)刷入，或者使用刷写软件刷写到ROOT所在插槽的boot分区(例如爱玩机、Kernelflasher)
+---
+
+</div>
+
+## 🚀 快速导航
+
+- 📖 [文档](https://github.com/zzh20188/GKI_KernelSU_SUSFS/wiki)
+- 📥 [下载](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)
+- 🔰 [教程](https://zzh20188.github.io/GKI_KernelSU_SUSFS/guide.html)
+
+---
+
+## ⚠️ 兼容性提醒
+
+> **注意：** 目前不支持一加 ColorOS 14、15，刷入后可能需要清除数据开机。
+
+> **rekernel功能（测试）：已支持 rekernel 功能（目前处于测试阶段）**
 
 
+---
 
-### 支持
-| 功能 | 说明 |
-| --- | --- |
-| [KernelSU](https://kernelsu.org/zh_CN/) | 包括**原版、MKSU、SUKISU、NEXT** |
-| [SUSFS4](https://gitlab.com/simonpunk/susfs4ksu) | 在内核层面辅助KSU隐藏的功能补丁 |
-| [LZ4KD](https://github.com/ShirkNeko/SukiSU_patch/tree/main/other) | 听说是来自HUAWEI source的ZRAM算法，补丁由[云彩之枫](http://www.coolapk.com/u/24963680)移植 |
-| [LZ4 1.10.0](https://github.com/lz4/lz4/releasesr) | GKI内核默认的LZ4算法升级 |
+## 📚 文档与指南
 
-<details>
+详细说明请查阅 [**GitHub Wiki（中英双语）**](https://github.com/zzh20188/GKI_KernelSU_SUSFS/wiki)
 
-<summary>还支持这几种算法，可在scene的ZRAM切换</summary>
+Wiki 涵盖内容：
+- [**🔰 教程**](https://zzh20188.github.io/GKI_KernelSU_SUSFS/guide.html)
+- 📥 下载/刷入内核
+- 💡 使用技巧 Tips
+- 🆘 救砖指南
+- 📊 内核版本兼容性说明
 
-### LZ4K、LZ4HC、deflate、842、~~zstdn~~、lz4k_oplus
+---
 
-</details>
+## ❗构建失败常见原因（SukiSU / SUSFS 更新不同步）
 
-### KSU管理器 & SUSFS模块
-由于一些原因，你不可缺少最新管理器和模块(见下)
-> ##### 如果长期不更新管理器，而只更新内核也就是使用ak3刷入，那么软件显示可能异常，会显得你和别人不一样，如SUKISU显示LKM，NEXT一些参数显示未知
-> ##### SUKISU内置SUSFS功能相对模块，缺失try mount/umount数量显示功能，以及自定义界面的一些选项
-#### 在编译完成后，你会看到类似 `SukiSU-Manager(13235)` 和 `susfs-release-1.5.2+_537cdba` 的压缩包，简单来说这就是与内核一同上传的***最新管理器与susfs模块***。
+当以下两个分支的更新节奏不一致时，构建可能失败：
 
-![例子](./assets/action.png)
+- [SukiSU builtin 分支](https://github.com/SukiSU-Ultra/SukiSU-Ultra/tree/builtin)
+- [SUSFS gki-android14-6.1 分支](https://gitlab.com/simonpunk/susfs4ksu/-/tree/gki-android14-6.1?ref_type=heads)
 
-#### 同样的，在[Release](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)的底部也同样包含它们
+例如：SUSFS 刚更新了新提交，但 SukiSU 的 `builtin` 分支还没跟进适配，这时打补丁/编译就容易失败。
 
-![release](./assets/release.png)
+如以下情况，只能等待SukiSU跟进，完成与SUSFS最新提交的适配。
 
+<img src="assets/sukisu_eg1.png" alt="SukiSU builtin 更新记录" width="80%">
+<img src="assets/susfs_eg1.png" alt="SUSFS gki-android14-6.1 更新记录" width="80%">
 
-### 内核构建时间
-在构建内核时，可以指定内核的构建时间。在Action的输入框中输入指定格式的字符即可。
-如：**Thu Jul 17 14:26:50 UTC 2025**
-> 这个时间表示的是2025年7月17日的14:26:50（协调世界时间，UTC）。
-当你没有输入指定时间，则为构建内核时的时间
+## 🔧 自定义提交配置
+通过 [`config/config`](config/config) 文件可以指定 SUSFS 和 SukiSU 使用特定的 commit。
 
+**什么是提交 (commit)？**
 
-### 紧急救援指南
+提交是一串哈希字符串，代表仓库在某个时间点的状态。例如将 sukisu 设为 `4b8644515fe6d87a109129e590ccd9d33a855dca`，即使用 1 月 30 日的 SukiSU 版本编译内核。
 
-> [!IMPORTANT]
-> **触发条件**  
-> 当设备因以下原因无法启动时需执行救援：  
-> - 刷入错误/不兼容的内核
-> - 内核版本适配异常（如5.10.66刷233版本的内核）
-1. 进入FASTBOOT模式
+**为什么要指定提交？**
 
-- 物理键组合：电源+音量- 或者 ADB命令： `adb reboot bootloader`
+- 当上游仓库更新引入 bug 或兼容性问题时，可回退到稳定版本
+- 当 SUSFS 与 SukiSU 版本不同步导致编译失败时，可手动指定兼容的版本
 
-2. 执行刷写命令
-```bash
-$ fastboot flash boot <boot.img文件全称>
+**如何获取提交哈希？**
+
+- SUSFS: [susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu)
+- SukiSU: [SukiSU-Ultra commits/builtin](https://github.com/SukiSU-Ultra/SukiSU-Ultra/commits/builtin/)
+
+以 SUSFS 为例，先选择分支，再复制对应提交的哈希值：
+
+![选择分支](assets/susfs_branch.png)
+![复制提交](assets/susfs_commit.png)
+
+```ini
+# 启用自定义提交
+custom=true
+
+# SUSFS 各分支的 commit hash
+gki-android12-5.10=
+gki-android13-5.15=
+gki-android14-6.1=
+gki-android15-6.6=
+
+# SukiSU 的 commit hash
+sukisu=
 ```
-### 原版镜像获取途径
-1. 从现有固件提取
 
-- 卡刷包：解压后使用[payload-dumper工具](https://magiskcn.com/payload-dumper-go-boot.html)
+> 留空则使用该分支的最新提交。
 
-- 线刷包：直接解压获取boot.img
+---
 
-2.外部资源获取
+## 🧪 伪装 `/proc/config.gz`（Stock Config）
 
-- 社区平台搜索：机型+原厂boot (如XDA/酷安)
+这是一个进阶技巧，不需要在工作流里手动开关。  
+构建时会自动检测 `config/stock_defconfig` 是否存在：存在则应用，不存在则跳过。
 
-- [移动端在线提取远程获取](https://magiskcn.com/payload-dumper-compose.html)
+使用方法：
+1. 确保设备当前是官方 ROM + 官方内核。
+2. 获取设备上的 `/proc/config.gz`（可在手机端或电脑端操作）。
+3. 解压后重命名为 `stock_defconfig`，上传到仓库 [`config/`](config/) 目录并提交（可直接在手机端完成）。
 
-> [!TIP]
-> ### 内核版本兼容性说明
-> 
-> **1. 跨子版本刷机规则**  
-> 当手机GKI主版本为5.10.x时（如5.10.168），可刷写同主版本更高子版本的内核（如5.10.198）。  
-> 关于**X-lts**版本，以 `android12-5.10.X-lts-AnyKernel3.zip` 为例：
-> - **X-lts** 表示长期支持版（子版本号最大，当前示例为5.10.238）
-> - LTS随着GKI源码更新，编译版本号将持续递增（其他如198的版本，是永久固定的）
-> - ⚠️ 注意：LTS虽为最新，**但**最新版≠最稳定（如6.6.x存在自动重启BUG）
-> 
-> **2. 内核版本伪装方法**  
-> 在MT管理器终端执行：
-> ```bash
-> uname -r | sed 's/^[^-]*//'
-> ```
-> 获取后直接复制，将此版本号填入Action编译面板即可实现内核版本伪装。
-> 
-> **3. 编译优化建议**  
-> 修改 [配置文件](.github/workflows/kernel-a12-5.10.yml)（如kernel-a12-5.10.yml）：
-> - ▶️ 删除/注释不需要的GKI版本配置（**加速编译**）
+构建流程会自动：
+- 复制到内核源码：`$KERNEL_ROOT/common/arch/arm64/configs/stock_defconfig`
+- 在 `$KERNEL_ROOT/common/kernel/Makefile` 中将 `$(obj)/config_data` 规则从 `$(KCONFIG_CONFIG)` 切换为 `arch/arm64/configs/stock_defconfig`
+- 使编译产物中的 `/proc/config.gz` 更贴近你的官方内核配置
+---
 
-### 更多内容
-可以提及您的意见...我会尝试！
+## 🛠️ 安装后推荐
+
+### 📦 模块推荐
+
+<table>
+<tr>
+<th>模块名称</th>
+<th>仓库</th>
+<th>频道</th>
+</tr>
+<tr>
+<td><b>LSPosed-Irena</b></td>
+<td><a href="https://github.com/re-zero001/LSPosed-Irena">GitHub</a></td>
+<td><a href="https://t.me/lsposed_irena">Telegram</a></td>
+</tr>
+<tr>
+<td><b>Zygisk Next</b></td>
+<td><a href="https://github.com/Dr-TSNG/ZygiskNext">GitHub</a></td>
+<td rowspan="2"><a href="https://t.me/real5ec1cff">Telegram</a></td>
+</tr>
+<tr>
+<td><b>TrickyStore</b></td>
+<td><a href="https://github.com/5ec1cff/TrickyStore">GitHub</a></td>
+</tr>
+</table>
+
+### 🔧 Xposed 模块
+
+| 模块 | 说明 |
+|:---:|:---|
+| **FuseFixer** | [Unicode零宽修复模块](https://t.me/real5ec1cff/268) |
+
+### App
+
+| 名称 | 说明 |
+|:---:|:---|
+| **Scene** | [官网](https://omarea.com/#/) |
+---
+
+<div align="center">
+
+**更多内容持续更新中...**
+
+⭐ 如果这个项目对你有帮助，请点个 Star 支持一下！
+
+</div>
